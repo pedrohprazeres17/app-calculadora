@@ -736,8 +736,8 @@
 
       <div class="formula-block">
         <div class="formula-label">Fórmula</div>
-        <div class="formula-main">P = 2 × (b + h)</div>
-        <div class="formula-sub" id="perim-substitution">P = 2 × (? + ?)</div>
+        <div class="formula-main">P = 4 × (b + h + p)</div>
+        <div class="formula-sub" id="perim-substitution">P = 4 × (? + ? + ?)</div>
       </div>
 
       <div class="result-box">
@@ -747,7 +747,7 @@
       </div>
 
       <div class="insight">
-        💡 O perímetro é a soma de todos os lados — como a quantidade de moldura necessária para contornar o retângulo.
+        💡 O perímetro total do paralelepípedo é a soma de todas as 12 arestas — 4 de cada dimensão (b, h e p).
       </div>
 
       <div class="btn-stack">
@@ -854,7 +854,7 @@
   }
 
   function calcArea(b, h, p) { return 2 * (b*h + b*p + h*p); }
-  function calcPerimeter(b, h) { return 2 * (b + h); }
+  function calcPerimeter(b, h, p) { return 4 * (b + h + p); }
   function calcVolume(b, h, p) { return b * h * p; }
 
   function clearFieldErrors() {
@@ -957,13 +957,13 @@
 
   /* ── CALCULATE PERIMETER ── */
   document.getElementById('calc-perim-btn').addEventListener('click', () => {
-    const vals = validateFields(false);
+    const vals = validateFields(true);
     if (!vals) return;
     saveInputs();
-    const result = calcPerimeter(vals.b, vals.h);
+    const result = calcPerimeter(vals.b, vals.h, vals.p);
     document.getElementById('perim-result').textContent = fmt(result) + ' cm';
     document.getElementById('perim-substitution').textContent =
-      'P = 2 × (' + fmt(vals.b) + ' + ' + fmt(vals.h) + ')';
+      'P = 4 × (' + fmt(vals.b) + ' + ' + fmt(vals.h) + ' + ' + fmt(vals.p) + ')';
     showScreen('screen-perimeter');
   });
 
