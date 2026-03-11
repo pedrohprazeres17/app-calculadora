@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#2D6A4F">
+  <link rel="manifest" href="manifest.json">
+  <title>GeoCalc</title>
+  <style>
+    /* ── FONTS ── */
+    @font-face {
+      font-family: 'Playfair Display';
+      font-weight: 700;
+      font-display: swap;
+      src: local('Playfair Display Bold'), local('PlayfairDisplay-Bold');
+    }
+    @font-face {
+      font-family: 'DM Sans';
+      font-weight: 400;
+      font-display: swap;
+      src: local('DM Sans'), local('DMSans-Regular');
+    }
+    @font-face {
+      font-family: 'DM Sans';
+      font-weight: 600;
+      font-display: swap;
+      src: local('DM Sans SemiBold'), local('DMSans-SemiBold');
+    }
+    @font-face {
+      font-family: 'DM Mono';
+      font-weight: 400;
+      font-display: swap;
+      src: local('DM Mono'), local('DMMono-Regular');
+    }
+
+    /* ── VARIABLES ── */
+    :root {
+      --bg: #F6F3EF;
+      --surface: #FFFFFF;
+      --border: #DDD8D2;
+      --text: #1C1814;
+      --text-muted: #8A837C;
+      --accent: #2D6A4F;
+      --accent-hover: #245C44;
+      --accent-light: #EAF4EF;
+      --accent-border: #B7DEC9;
+      --error: #C0392B;
+      --error-bg: #FDF0EF;
+      --radius: 12px;
+      --shadow: 0 4px 24px rgba(0,0,0,0.07);
+      --font-heading: 'Playfair Display', Georgia, serif;
+      --font-ui: 'DM Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --font-mono: 'DM Mono', "Courier New", Consolas, monospace;
+    }
+
+    /* ── RESET ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; }
+
+    /* ── BASE ── */
+    body {
+      background: var(--bg);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-ui);
+      color: var(--text);
+      padding: 16px;
+    }
+
+    .app-wrapper {
+      width: 100%;
+      max-width: 460px;
+      margin: auto;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      padding: 40px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    @media (max-width: 480px) {
+      .card { padding: 24px; }
+    }
+
+    /* ── SCREENS ── */
+    .screen { display: none; }
+    .screen.active { display: block; }
+
+    .screen-enter {
+      animation: screenEnter 220ms ease forwards;
+    }
+    @keyframes screenEnter {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .screen-exit {
+      animation: screenExit 200ms ease forwards;
+    }
+    @keyframes screenExit {
+      from { opacity: 1; transform: translateY(0); }
+      to   { opacity: 0; transform: translateY(-8px); }
+    }
+
+    /* ── TYPOGRAPHY ── */
+    .heading-xl {
+      font-family: var(--font-heading);
+      font-size: 36px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.2;
+    }
+    .heading-lg {
+      font-family: var(--font-heading);
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.3;
+    }
+    .heading-app {
+      font-family: var(--font-heading);
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--text);
+      text-align: center;
+    }
+    .subtitle {
+      font-family: var(--font-ui);
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+    .subtitle-lg {
+      font-family: var(--font-ui);
+      font-size: 15px;
+      color: var(--text-muted);
+      margin-top: 10px;
+    }
+
+    @media (max-width: 480px) {
+      .heading-xl { font-size: 28px; }
+    }
+
+    /* ── PILL BADGE ── */
+    .pill {
+      display: inline-block;
+      background: var(--accent-light);
+      color: var(--accent);
+      font-family: var(--font-ui);
+      font-size: 12px;
+      border-radius: 20px;
+      padding: 4px 14px;
+      margin-bottom: 16px;
+    }
+
+    /* ── BUTTONS ── */
+    .btn {
+      display: block;
+      width: 100%;
+      border: none;
+      border-radius: 10px;
+      padding: 14px;
+      font-family: var(--font-ui);
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
+      min-height: 44px;
+      text-align: center;
+    }
+    .btn:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+    }
+    .btn-primary:hover {
+      background: var(--accent-hover);
+      transform: scale(1.01);
+    }
+    .btn-outline {
+      background: #fff;
+      color: var(--accent);
+      border: 2px solid var(--accent);
+      font-size: 14px;
+      padding: 13px;
+    }
+    .btn-outline:hover {
+      background: var(--accent-light);
+    }
+
+    /* ── FORMS ── */
+    label {
+      display: block;
+      font-family: var(--font-ui);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    input {
+      display: block;
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-family: var(--font-ui);
+      font-size: 16px;
+      color: var(--text);
+      background: #fff;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      outline: none;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+    input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(45,106,79,0.12);
+    }
+    input.error {
+      border-color: var(--error);
+    }
+    .field { margin-bottom: 0; }
+    .field-error {
+      font-family: var(--font-ui);
+      font-size: 12px;
+      color: var(--error);
+      margin-top: 5px;
+    }
+    .field-note {
+      font-family: var(--font-ui);
+      font-size: 11px;
+      font-style: italic;
+      color: var(--text-muted);
+      margin-top: 5px;
+    }
+
+    .input-wrap {
+      position: relative;
+    }
+    .input-wrap input {
+      padding-right: 44px;
+    }
+    .unit {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-family: var(--font-ui);
+      font-size: 13px;
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+
+    /* ── HEADER ROW ── */
+    .screen-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .back-btn {
+      background: none;
+      border: none;
+      font-family: var(--font-ui);
+      font-size: 14px;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 4px 0;
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+    }
+    .back-btn:hover { color: var(--accent); }
+    .back-btn:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+      border-radius: 4px;
+    }
+    .logout-btn {
+      background: none;
+      border: none;
+      font-family: var(--font-ui);
+      font-size: 12px;
+      color: var(--text-muted);
+      cursor: pointer;
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+    }
+    .logout-btn:hover { color: var(--error); }
+    .logout-btn:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+      border-radius: 4px;
+    }
+
+    /* ── FORMULA BLOCK ── */
+    .formula-block {
+      background: #F8F8F6;
+      border-left: 4px solid var(--accent);
+      border-radius: 0 8px 8px 0;
+      padding: 16px 20px;
+      margin: 20px 0;
+    }
+    .formula-label {
+      font-family: var(--font-ui);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+    }
+    .formula-main {
+      font-family: var(--font-mono);
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text);
+      margin-top: 4px;
+    }
+    .formula-sub {
+      font-family: var(--font-mono);
+      font-size: 15px;
+      color: var(--text-muted);
+      margin-top: 6px;
+    }
+
+    /* ── RESULT BOX ── */
+    .result-box {
+      background: var(--accent-light);
+      border: 1px solid var(--accent-border);
+      border-radius: 12px;
+      padding: 24px;
+      text-align: center;
+    }
+    .result-label {
+      font-family: var(--font-ui);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+    }
+    .result-value {
+      font-family: var(--font-heading);
+      font-size: 52px;
+      font-weight: 700;
+      color: var(--accent);
+      line-height: 1;
+      margin-top: 8px;
+      animation: resultIn 300ms ease forwards;
+    }
+    @keyframes resultIn {
+      from { opacity: 0; transform: scale(0.92); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+    .result-sub {
+      font-family: var(--font-ui);
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-top: 6px;
+    }
+    @media (max-width: 480px) {
+      .result-value { font-size: 40px; }
+    }
+
+    /* ── INSIGHT NOTE ── */
+    .insight {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px 16px;
+      margin-top: 16px;
+      font-family: var(--font-ui);
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    /* ── FEATURE TAGS ── */
+    .feature-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 16px;
+    }
+    .feature-tag {
+      border: 1px solid var(--accent-border);
+      color: var(--accent);
+      font-family: var(--font-ui);
+      font-size: 13px;
+      border-radius: 6px;
+      padding: 4px 10px;
+    }
+
+    /* ── FOOTER ── */
+    .screen-footer {
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+      margin-top: 28px;
+      font-family: var(--font-ui);
+      font-size: 11px;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    /* ── SVG ── */
+    .svg-wrap {
+      width: 100%;
+      max-width: 260px;
+      margin: 0 auto 24px;
+      display: block;
+    }
+    .svg-wrap-sm {
+      width: 100%;
+      max-width: 220px;
+      margin: 0 auto 20px;
+      display: block;
+    }
+    svg { width: 100%; height: auto; }
+
+    /* ── SVG HIGHLIGHT ── */
+    .dim-line { transition: stroke 0.2s, stroke-width 0.2s; }
+    .dim-line.highlight { stroke: var(--accent) !important; stroke-width: 2.5 !important; }
+
+    /* ── PERIMETER DRAW ANIMATION ── */
+    #perim-rect {
+      stroke-dasharray: 580;
+      stroke-dashoffset: 580;
+    }
+    #perim-rect.draw {
+      animation: draw-rect 1.2s ease-in-out forwards;
+    }
+    @keyframes draw-rect {
+      to { stroke-dashoffset: 0; }
+    }
+
+    /* ── LOGIN SCREEN ── */
+    .login-logo {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    .login-tagline {
+      font-family: var(--font-ui);
+      font-size: 14px;
+      color: var(--text-muted);
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .form-gap {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .error-msg {
+      font-family: var(--font-ui);
+      font-size: 13px;
+      color: var(--error);
+      background: var(--error-bg);
+      border-radius: 6px;
+      padding: 10px 14px;
+    }
+    .demo-note {
+      font-family: var(--font-ui);
+      font-size: 11px;
+      color: var(--text-muted);
+      text-align: center;
+      margin-top: 16px;
+    }
+
+    /* ── BUTTONS GAP ── */
+    .btn-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 24px;
+    }
+  </style>
+</head>
+<body>
+<div class="app-wrapper">
+  <div class="card">
+
+    <!-- ══════════════════════════════════ -->
+    <!-- SCREEN 1 — LOGIN                  -->
+    <!-- ══════════════════════════════════ -->
+    <div class="screen active" id="screen-login">
+      <div class="login-logo">
+        <svg width="64" height="64" viewBox="0 0 64 64" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+          <rect width="64" height="64" rx="14" fill="#2D6A4F"/>
+          <rect x="12" y="18" width="40" height="28" fill="none" stroke="white" stroke-width="2.5" rx="2"/>
+          <line x1="12" y1="41" x2="20" y2="41" stroke="white" stroke-width="2" stroke-linecap="round"/>
+          <line x1="20" y1="41" x2="20" y2="33" stroke="white" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </div>
+
+      <h1 class="heading-app">GeoCalc</h1>
+      <p class="login-tagline">Calculadora Geométrica</p>
+
+      <div class="form-gap">
+        <div class="field">
+          <label for="login-user">Usuário</label>
+          <input type="text" id="login-user" autocomplete="username" autocapitalize="none" placeholder="aluno">
+        </div>
+        <div class="field">
+          <label for="login-pass">Senha</label>
+          <input type="password" id="login-pass" autocomplete="current-password" placeholder="••••••">
+        </div>
+        <p class="error-msg" id="login-error" hidden>Usuário ou senha incorretos.</p>
+        <button class="btn btn-primary" id="login-btn">Entrar →</button>
+      </div>
+
+      <p class="demo-note">Acesso demonstrativo — use aluno / geo123</p>
+    </div>
+
+    <!-- ══════════════════════════════════ -->
+    <!-- SCREEN 2 — WELCOME                -->
+    <!-- ══════════════════════════════════ -->
+    <div class="screen" id="screen-welcome">
+      <div class="screen-header">
+        <span></span>
+        <button class="logout-btn" id="logout-btn" aria-label="Sair">Sair</button>
+      </div>
+
+      <div class="svg-wrap" aria-hidden="true">
+        <svg viewBox="0 0 260 160" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <marker id="arrow-start-w" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto-start-reverse">
+              <polygon points="0,1.5 6,3 0,4.5" fill="#8A837C"/>
+            </marker>
+            <marker id="arrow-end-w" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+              <polygon points="0,1.5 6,3 0,4.5" fill="#8A837C"/>
+            </marker>
+          </defs>
+          <!-- Main rectangle -->
+          <rect x="30" y="30" width="180" height="100" stroke="#2D6A4F" stroke-width="2" fill="#EAF4EF"/>
+          <!-- Right angle marker bottom-left -->
+          <polyline points="30,122 42,122 42,130" fill="none" stroke="#8A837C" stroke-width="1.5"/>
+          <!-- Dimension line base (below rect) -->
+          <line x1="30" y1="148" x2="210" y2="148" stroke="#8A837C" stroke-dasharray="4 3" stroke-width="1"
+                marker-start="url(#arrow-start-w)" marker-end="url(#arrow-end-w)"/>
+          <!-- Base label -->
+          <text x="120" y="160" text-anchor="middle" font-family="'DM Mono', monospace" font-size="13" fill="#2D6A4F">b</text>
+          <!-- Dimension line height (right of rect) -->
+          <line x1="228" y1="30" x2="228" y2="130" stroke="#8A837C" stroke-dasharray="4 3" stroke-width="1"
+                marker-start="url(#arrow-start-w)" marker-end="url(#arrow-end-w)"/>
+          <!-- Height label -->
+          <text x="242" y="84" text-anchor="start" font-family="'DM Mono', monospace" font-size="13" fill="#2D6A4F">h</text>
+        </svg>
+      </div>
+
+      <span class="pill">📐 Calculadora Geométrica</span>
+      <h2 class="heading-xl">Verifique seus cálculos</h2>
+      <p class="subtitle-lg">Insira as medidas do retângulo e confira a Área, o Perímetro e o Volume na hora.</p>
+
+      <div class="feature-tags">
+        <span class="feature-tag">✓ Área</span>
+        <span class="feature-tag">✓ Perímetro</span>
+        <span class="feature-tag">✓ Volume</span>
+      </div>
+
+      <div class="btn-stack">
+        <button class="btn btn-primary" id="start-btn">Começar →</button>
+      </div>
+
+      <div class="screen-footer">Área · Perímetro · Volume</div>
+    </div>
+
+    <!-- ══════════════════════════════════ -->
+    <!-- SCREEN 3 — INPUT                  -->
+    <!-- ══════════════════════════════════ -->
+    <div class="screen" id="screen-input">
+      <div class="screen-header">
+        <button class="back-btn" id="input-back">← Voltar</button>
+      </div>
+
+      <h2 class="heading-lg">Medidas do Retângulo</h2>
+      <p class="subtitle" style="margin-bottom: 20px;">Preencha as dimensões abaixo</p>
+
+      <div class="svg-wrap-sm" aria-hidden="true">
+        <svg viewBox="0 0 240 150" xmlns="http://www.w3.org/2000/svg">
+          <!-- Main rectangle (no fill) -->
+          <rect x="20" y="20" width="160" height="90" fill="none" stroke="#2D6A4F" stroke-width="2"/>
+          <!-- Depth diagonal -->
+          <line x1="180" y1="20" x2="215" y2="5" stroke="#8A837C" stroke-dasharray="4 3" stroke-width="1.5" class="dim-line" data-dim="p"/>
+          <line x1="180" y1="110" x2="215" y2="95" stroke="#8A837C" stroke-dasharray="4 3" stroke-width="1.5"/>
+          <line x1="215" y1="5" x2="215" y2="95" stroke="#8A837C" stroke-dasharray="4 3" stroke-width="1.5"/>
+          <!-- Base dimension line -->
+          <line x1="20" y1="130" x2="180" y2="130" stroke="#8A837C" stroke-dasharray="4 3" stroke-width="1.5" class="dim-line" data-dim="b"/>
+          <!-- Height dimension line -->
+          <line x1="5" y1="20" x2="5" y2="110" stroke="#8A837C" stroke-dasharray="4 3" stroke-width="1.5" class="dim-line" data-dim="h"/>
+          <!-- Labels -->
+          <text x="100" y="144" text-anchor="middle" font-family="'DM Mono', monospace" font-size="12" fill="#2D6A4F">b</text>
+          <text x="0" y="70" text-anchor="end" font-family="'DM Mono', monospace" font-size="12" fill="#2D6A4F" dy="4">h</text>
+          <text x="228" y="52" text-anchor="middle" font-family="'DM Mono', monospace" font-size="12" fill="#2D6A4F">p</text>
+        </svg>
+      </div>
+
+      <div class="form-gap">
+        <div class="field">
+          <label for="input-base">Base (b)</label>
+          <div class="input-wrap">
+            <input type="number" id="input-base" min="0" step="any" placeholder="ex: 8" data-dim="b">
+            <span class="unit">cm</span>
+          </div>
+          <p class="field-error" id="error-base" hidden>Insira um valor válido</p>
+        </div>
+
+        <div class="field">
+          <label for="input-height">Altura (h)</label>
+          <div class="input-wrap">
+            <input type="number" id="input-height" min="0" step="any" placeholder="ex: 5" data-dim="h">
+            <span class="unit">cm</span>
+          </div>
+          <p class="field-error" id="error-height" hidden>Insira um valor válido</p>
+        </div>
+
+        <div class="field">
+          <label for="input-depth">Profundidade (p)</label>
+          <div class="input-wrap">
+            <input type="number" id="input-depth" min="0" step="any" placeholder="ex: 3" data-dim="p">
+            <span class="unit">cm</span>
+          </div>
+          <p class="field-error" id="error-depth" hidden>Insira um valor válido</p>
+          <p class="field-note">Necessária apenas para o Volume</p>
+        </div>
+      </div>
+
+      <div class="btn-stack">
+        <button class="btn btn-primary" id="calc-area-btn">Calcular Área →</button>
+        <button class="btn btn-outline" id="calc-perim-btn">Calcular Perímetro →</button>
+        <button class="btn btn-outline" id="calc-vol-btn">Calcular Volume →</button>
+      </div>
+
+      <div class="screen-footer">Área · Perímetro · Volume</div>
+    </div>
+
+    <!-- ══════════════════════════════════ -->
+    <!-- SCREEN 4 — AREA RESULT            -->
+    <!-- ══════════════════════════════════ -->
+    <div class="screen" id="screen-area">
+      <div class="screen-header">
+        <button class="back-btn result-back" data-target="screen-input">← Voltar</button>
+        <span class="pill" style="margin-bottom: 0;">Área</span>
+      </div>
+
+      <div class="svg-wrap" aria-hidden="true">
+        <svg viewBox="0 0 260 180" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <pattern id="hatch" patternUnits="userSpaceOnUse" width="12" height="12" patternTransform="rotate(45)">
+              <line x1="0" y1="0" x2="0" y2="12" stroke="#B7DEC9" stroke-width="1"/>
+            </pattern>
+            <marker id="arrow-s" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto-start-reverse">
+              <polygon points="0,1.5 6,3 0,4.5" fill="#8A837C"/>
+            </marker>
+            <marker id="arrow-e" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+              <polygon points="0,1.5 6,3 0,4.5" fill="#8A837C"/>
+            </marker>
+          </defs>
+          <!-- Hatch fill -->
+          <rect x="30" y="25" width="180" height="110" fill="url(#hatch)"/>
+          <!-- Light overlay -->
+          <rect x="30" y="25" width="180" height="110" fill="#EAF4EF" opacity="0.4"/>
+          <!-- Border -->
+          <rect x="30" y="25" width="180" height="110" fill="none" stroke="#2D6A4F" stroke-width="2"/>
+          <!-- Center label A -->
+          <text x="120" y="90" text-anchor="middle" dominant-baseline="middle" font-family="'Playfair Display', Georgia, serif" font-size="22" fill="#2D6A4F" font-style="italic">A</text>
+          <!-- Dimension lines -->
+          <line x1="30" y1="158" x2="210" y2="158" stroke="#8A837C" stroke-dasharray="4 3" stroke-width="1"
+                marker-start="url(#arrow-s)" marker-end="url(#arrow-e)"/>
+          <text x="120" y="172" text-anchor="middle" font-family="'DM Mono', monospace" font-size="12" fill="#2D6A4F">b</text>
+          <line x1="228" y1="25" x2="228" y2="135" stroke="#8A837C" stroke-dasharray="4 3" stroke-width="1"
+                marker-start="url(#arrow-s)" marker-end="url(#arrow-e)"/>
+          <text x="244" y="84" text-anchor="start" font-family="'DM Mono', monospace" font-size="12" fill="#2D6A4F" dy="4">h</text>
+        </svg>
+      </div>
+
+      <div class="formula-block">
+        <div class="formula-label">Fórmula</div>
+        <div class="formula-main">A = b × h</div>
+        <div class="formula-sub" id="area-substitution">A = ? × ?</div>
+      </div>
+
+      <div class="result-box">
+        <div class="result-label">Resultado</div>
+        <div class="result-value" id="area-result">—</div>
+        <div class="result-sub">de área</div>
+      </div>
+
+      <div class="insight">
+        💡 A área representa a superfície total — como a quantidade de tinta necessária para cobrir o retângulo.
+      </div>
+
+      <div class="btn-stack">
+        <button class="btn btn-outline result-back" data-target="screen-input">← Calcular novamente</button>
+      </div>
+
+      <div class="screen-footer">Área · Perímetro · Volume</div>
+    </div>
+
+    <!-- ══════════════════════════════════ -->
+    <!-- SCREEN 5 — PERIMETER RESULT       -->
+    <!-- ══════════════════════════════════ -->
+    <div class="screen" id="screen-perimeter">
+      <div class="screen-header">
+        <button class="back-btn result-back" data-target="screen-input">← Voltar</button>
+        <span class="pill" style="margin-bottom: 0;">Perímetro</span>
+      </div>
+
+      <div class="svg-wrap" aria-hidden="true">
+        <svg viewBox="0 0 260 180" xmlns="http://www.w3.org/2000/svg">
+          <!-- Corner dots -->
+          <circle cx="30" cy="25" r="5" fill="#2D6A4F"/>
+          <circle cx="210" cy="25" r="5" fill="#2D6A4F"/>
+          <circle cx="210" cy="135" r="5" fill="#2D6A4F"/>
+          <circle cx="30" cy="135" r="5" fill="#2D6A4F"/>
+          <!-- Animated rectangle -->
+          <rect id="perim-rect" x="30" y="25" width="180" height="110" fill="none" stroke="#2D6A4F" stroke-width="5"/>
+          <!-- Labels -->
+          <text x="120" y="18" text-anchor="middle" font-family="'DM Mono', monospace" font-size="12" fill="#8A837C">b</text>
+          <text x="120" y="158" text-anchor="middle" font-family="'DM Mono', monospace" font-size="12" fill="#8A837C">b</text>
+          <text x="16" y="84" text-anchor="middle" font-family="'DM Mono', monospace" font-size="12" fill="#8A837C" dy="4">h</text>
+          <text x="244" y="84" text-anchor="middle" font-family="'DM Mono', monospace" font-size="12" fill="#8A837C" dy="4">h</text>
+        </svg>
+      </div>
+
+      <div class="formula-block">
+        <div class="formula-label">Fórmula</div>
+        <div class="formula-main">P = 2 × (b + h)</div>
+        <div class="formula-sub" id="perim-substitution">P = 2 × (? + ?)</div>
+      </div>
+
+      <div class="result-box">
+        <div class="result-label">Resultado</div>
+        <div class="result-value" id="perim-result">—</div>
+        <div class="result-sub">de perímetro</div>
+      </div>
+
+      <div class="insight">
+        💡 O perímetro é a soma de todos os lados — como a quantidade de moldura necessária para contornar o retângulo.
+      </div>
+
+      <div class="btn-stack">
+        <button class="btn btn-outline result-back" data-target="screen-input">← Calcular novamente</button>
+      </div>
+
+      <div class="screen-footer">Área · Perímetro · Volume</div>
+    </div>
+
+    <!-- ══════════════════════════════════ -->
+    <!-- SCREEN 6 — VOLUME RESULT          -->
+    <!-- ══════════════════════════════════ -->
+    <div class="screen" id="screen-volume">
+      <div class="screen-header">
+        <button class="back-btn result-back" data-target="screen-input">← Voltar</button>
+        <span class="pill" style="margin-bottom: 0;">Volume</span>
+      </div>
+
+      <div class="svg-wrap" aria-hidden="true">
+        <svg viewBox="0 0 260 190" xmlns="http://www.w3.org/2000/svg">
+          <!-- Front face -->
+          <polygon points="60,80 60,150 160,150 160,80" fill="white" stroke="#2D6A4F" stroke-width="2"/>
+          <!-- Top face -->
+          <polygon points="60,80 110,45 210,45 160,80" fill="#EAF4EF" stroke="#2D6A4F" stroke-width="2"/>
+          <!-- Right face -->
+          <polygon points="160,80 210,45 210,115 160,150" fill="#D4EBE0" stroke="#2D6A4F" stroke-width="2"/>
+          <!-- Dimension dashed lines -->
+          <line x1="60" y1="160" x2="160" y2="160" stroke="#8A837C" stroke-dasharray="4 3" stroke-width="1"/>
+          <line x1="160" y1="155" x2="210" y2="120" stroke="#8A837C" stroke-dasharray="4 3" stroke-width="1"/>
+          <line x1="48" y1="80" x2="48" y2="150" stroke="#8A837C" stroke-dasharray="4 3" stroke-width="1"/>
+          <!-- Labels -->
+          <text x="110" y="175" text-anchor="middle" font-family="'DM Mono', monospace" font-size="12" fill="#2D6A4F">b</text>
+          <text x="36" y="118" text-anchor="middle" font-family="'DM Mono', monospace" font-size="12" fill="#2D6A4F" dy="4">h</text>
+          <text x="195" y="145" text-anchor="middle" font-family="'DM Mono', monospace" font-size="12" fill="#2D6A4F">p</text>
+        </svg>
+      </div>
+
+      <div class="formula-block">
+        <div class="formula-label">Fórmula</div>
+        <div class="formula-main">V = b × h × p</div>
+        <div class="formula-sub" id="vol-substitution">V = ? × ? × ?</div>
+      </div>
+
+      <div class="result-box">
+        <div class="result-label">Resultado</div>
+        <div class="result-value" id="vol-result">—</div>
+        <div class="result-sub">de volume</div>
+      </div>
+
+      <div class="insight">
+        💡 O volume indica a capacidade interna do sólido — como a quantidade de água que ele poderia conter.
+      </div>
+
+      <div class="btn-stack">
+        <button class="btn btn-outline result-back" data-target="screen-input">← Calcular novamente</button>
+      </div>
+
+      <div class="screen-footer">Área · Perímetro · Volume</div>
+    </div>
+
+  </div><!-- .card -->
+</div><!-- .app-wrapper -->
+
+<script>
+  /* ── CREDENTIALS ── */
+  const USERS = [
+    { user: "aluno", pass: "geo123" },
+    { user: "prof",  pass: "prof456" }
+  ];
+
+  /* ── STATE ── */
+  let currentBase = '', currentHeight = '', currentDepth = '';
+  let activeScreen = 'screen-login';
+
+  /* ── SCREEN TRANSITION ── */
+  function showScreen(id) {
+    const current = document.getElementById(activeScreen);
+    const next = document.getElementById(id);
+    if (!next || activeScreen === id) return;
+
+    current.classList.add('screen-exit');
+    setTimeout(() => {
+      current.classList.remove('screen-exit', 'active');
+      current.style.display = '';
+      next.classList.add('active', 'screen-enter');
+      activeScreen = id;
+
+      // Post-show hooks
+      if (id === 'screen-perimeter') {
+        setTimeout(() => {
+          const rect = document.getElementById('perim-rect');
+          if (rect) { rect.classList.remove('draw'); void rect.offsetWidth; rect.classList.add('draw'); }
+        }, 50);
+      }
+
+      setTimeout(() => next.classList.remove('screen-enter'), 250);
+    }, 200);
+  }
+
+  /* ── HELPERS ── */
+  function fmt(n) {
+    const s = n.toLocaleString('pt-BR', { maximumFractionDigits: 2 });
+    return s;
+  }
+
+  function calcArea(b, h)    { return b * h; }
+  function calcPerimeter(b, h) { return 2 * (b + h); }
+  function calcVolume(b, h, p) { return b * h * p; }
+
+  function clearFieldErrors() {
+    ['base','height','depth'].forEach(f => {
+      document.getElementById('input-' + f).classList.remove('error');
+      document.getElementById('error-' + f).hidden = true;
+    });
+  }
+
+  function showFieldError(field) {
+    document.getElementById('input-' + field).classList.add('error');
+    document.getElementById('error-' + field).hidden = false;
+  }
+
+  function validateFields(needDepth) {
+    clearFieldErrors();
+    const b = parseFloat(document.getElementById('input-base').value);
+    const h = parseFloat(document.getElementById('input-height').value);
+    const p = parseFloat(document.getElementById('input-depth').value);
+    let valid = true;
+    let firstError = null;
+
+    if (!b || b <= 0) { showFieldError('base'); valid = false; firstError = firstError || 'input-base'; }
+    if (!h || h <= 0) { showFieldError('height'); valid = false; firstError = firstError || 'input-height'; }
+    if (needDepth && (!p || p <= 0)) { showFieldError('depth'); valid = false; firstError = firstError || 'input-depth'; }
+
+    if (!valid && firstError) {
+      document.getElementById(firstError).scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+    return valid ? { b, h, p } : null;
+  }
+
+  function saveInputs() {
+    currentBase   = document.getElementById('input-base').value;
+    currentHeight = document.getElementById('input-height').value;
+    currentDepth  = document.getElementById('input-depth').value;
+  }
+
+  function restoreInputs() {
+    document.getElementById('input-base').value   = currentBase;
+    document.getElementById('input-height').value = currentHeight;
+    document.getElementById('input-depth').value  = currentDepth;
+  }
+
+  /* ── LOGIN ── */
+  document.getElementById('login-btn').addEventListener('click', () => {
+    const u = document.getElementById('login-user').value.trim();
+    const p = document.getElementById('login-pass').value;
+    const ok = USERS.some(x => x.user === u && x.pass === p);
+    if (ok) {
+      document.getElementById('login-error').hidden = true;
+      showScreen('screen-welcome');
+    } else {
+      document.getElementById('login-error').hidden = false;
+      document.getElementById('login-pass').value = '';
+      document.getElementById('login-pass').focus();
+    }
+  });
+
+  document.getElementById('login-pass').addEventListener('keydown', e => {
+    if (e.key === 'Enter') document.getElementById('login-btn').click();
+  });
+  document.getElementById('login-user').addEventListener('keydown', e => {
+    if (e.key === 'Enter') document.getElementById('login-pass').focus();
+  });
+
+  /* ── LOGOUT ── */
+  document.getElementById('logout-btn').addEventListener('click', () => {
+    document.getElementById('login-user').value = '';
+    document.getElementById('login-pass').value = '';
+    showScreen('screen-login');
+  });
+
+  /* ── WELCOME → INPUT ── */
+  document.getElementById('start-btn').addEventListener('click', () => showScreen('screen-input'));
+
+  /* ── INPUT BACK ── */
+  document.getElementById('input-back').addEventListener('click', () => showScreen('screen-welcome'));
+
+  /* ── RESULT BACKS ── */
+  document.querySelectorAll('.result-back').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = btn.dataset.target || 'screen-input';
+      if (target === 'screen-input') restoreInputs();
+      showScreen(target);
+    });
+  });
+
+  /* ── CALCULATE AREA ── */
+  document.getElementById('calc-area-btn').addEventListener('click', () => {
+    const vals = validateFields(false);
+    if (!vals) return;
+    saveInputs();
+    const result = calcArea(vals.b, vals.h);
+    document.getElementById('area-result').textContent = fmt(result) + ' cm²';
+    document.getElementById('area-substitution').textContent =
+      'A = ' + fmt(vals.b) + ' × ' + fmt(vals.h);
+    showScreen('screen-area');
+  });
+
+  /* ── CALCULATE PERIMETER ── */
+  document.getElementById('calc-perim-btn').addEventListener('click', () => {
+    const vals = validateFields(false);
+    if (!vals) return;
+    saveInputs();
+    const result = calcPerimeter(vals.b, vals.h);
+    document.getElementById('perim-result').textContent = fmt(result) + ' cm';
+    document.getElementById('perim-substitution').textContent =
+      'P = 2 × (' + fmt(vals.b) + ' + ' + fmt(vals.h) + ')';
+    showScreen('screen-perimeter');
+  });
+
+  /* ── CALCULATE VOLUME ── */
+  document.getElementById('calc-vol-btn').addEventListener('click', () => {
+    const vals = validateFields(true);
+    if (!vals) return;
+    saveInputs();
+    const result = calcVolume(vals.b, vals.h, vals.p);
+    document.getElementById('vol-result').textContent = fmt(result) + ' cm³';
+    document.getElementById('vol-substitution').textContent =
+      'V = ' + fmt(vals.b) + ' × ' + fmt(vals.h) + ' × ' + fmt(vals.p);
+    showScreen('screen-volume');
+  });
+
+  /* ── SVG HIGHLIGHTS ON INPUT FOCUS ── */
+  document.querySelectorAll('#screen-input input[data-dim]').forEach(input => {
+    input.addEventListener('focus', () => {
+      const dim = input.dataset.dim;
+      document.querySelectorAll('#screen-input .dim-line').forEach(el => el.classList.remove('highlight'));
+      document.querySelectorAll('#screen-input .dim-line[data-dim="' + dim + '"]').forEach(el => el.classList.add('highlight'));
+    });
+    input.addEventListener('blur', () => {
+      document.querySelectorAll('#screen-input .dim-line').forEach(el => el.classList.remove('highlight'));
+    });
+  });
+
+  /* ── SERVICE WORKER ── */
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW error:', err));
+    });
+  }
+</script>
+
+<!--
+  ═══════════════════════════════════════════════════════
+  COMO PUBLICAR, GERAR QR CODE E CRIAR O APK
+  ═══════════════════════════════════════════════════════
+
+  PASSO 1 — HOSPEDAR ONLINE (obrigatório para QR Code e APK)
+  ──────────────────────────────────────────────────────────
+  Opção A — GitHub Pages (gratuito):
+    1. Crie uma conta em github.com
+    2. Crie um repositório público chamado "geocalc"
+    3. Faça upload dos 4 arquivos: index.html, manifest.json, sw.js, icon.svg
+    4. Vá em Settings → Pages → Source: main branch → Save
+    5. URL pública: https://seu-usuario.github.io/geocalc
+
+  Opção B — Netlify (ainda mais fácil):
+    1. Acesse netlify.com e faça login
+    2. Arraste a pasta com os 4 arquivos para o campo "Drop your site here"
+    3. URL pública gerada automaticamente (ex: geocalc-abc123.netlify.app)
+
+  PASSO 2 — GERAR QR CODE PARA A APRESENTAÇÃO
+  ──────────────────────────────────────────────
+    1. Acesse qr-code-generator.com
+    2. Cole a URL pública do passo anterior
+    3. Baixe o QR Code em PNG ou SVG
+    4. Cole no slide da apresentação
+    → Qualquer colega consegue abrir no celular pelo navegador, sem instalar nada
+
+  PASSO 3 — GERAR O APK PARA ENTREGAR AO PROFESSOR
+  ──────────────────────────────────────────────────
+    1. Acesse pwabuilder.com
+    2. Cole a URL pública no campo e clique em "Start"
+    3. Aguarde a análise (deve mostrar verde em todos os campos)
+    4. Clique em "Android" → "Generate Package"
+    5. Baixe o arquivo .apk gerado
+    6. Para instalar no Android:
+       - Transfira via cabo USB ou Google Drive
+       - Nas configurações do celular, ative "Instalar de fontes desconhecidas"
+       - Abra o arquivo .apk e instale
+    → O app funciona 100% offline após a instalação
+
+  CREDENCIAIS DE ACESSO:
+    Usuário: aluno   | Senha: geo123
+    Usuário: prof    | Senha: prof456
+
+  ═══════════════════════════════════════════════════════
+-->
+</body>
+</html>
