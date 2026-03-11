@@ -626,7 +626,7 @@
             <span class="unit">cm</span>
           </div>
           <p class="field-error" id="error-depth" hidden>Insira um valor válido</p>
-          <p class="field-note">Necessária apenas para o Volume</p>
+          <p class="field-note">Necessária para Área Total e Volume</p>
         </div>
       </div>
 
@@ -649,50 +649,56 @@
       </div>
 
       <div class="svg-wrap" aria-hidden="true">
-        <svg viewBox="0 0 260 180" xmlns="http://www.w3.org/2000/svg">
+        <svg viewBox="0 0 260 190" xmlns="http://www.w3.org/2000/svg">
           <defs>
-            <pattern id="hatch" patternUnits="userSpaceOnUse" width="12" height="12" patternTransform="rotate(45)">
-              <line x1="0" y1="0" x2="0" y2="12" stroke="#B7DEC9" stroke-width="1"/>
+            <pattern id="hatch-front" patternUnits="userSpaceOnUse" width="10" height="10" patternTransform="rotate(45)">
+              <line x1="0" y1="0" x2="0" y2="10" stroke="#B7DEC9" stroke-width="1"/>
             </pattern>
-            <marker id="arrow-s" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto-start-reverse">
-              <polygon points="0,1.5 6,3 0,4.5" fill="#8A837C"/>
-            </marker>
-            <marker id="arrow-e" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
-              <polygon points="0,1.5 6,3 0,4.5" fill="#8A837C"/>
-            </marker>
+            <pattern id="hatch-top" patternUnits="userSpaceOnUse" width="10" height="10" patternTransform="rotate(45)">
+              <line x1="0" y1="0" x2="0" y2="10" stroke="#B7DEC9" stroke-width="1"/>
+            </pattern>
+            <pattern id="hatch-right" patternUnits="userSpaceOnUse" width="10" height="10" patternTransform="rotate(45)">
+              <line x1="0" y1="0" x2="0" y2="10" stroke="#9DCFB5" stroke-width="1"/>
+            </pattern>
           </defs>
-          <!-- Hatch fill -->
-          <rect x="30" y="25" width="180" height="110" fill="url(#hatch)"/>
-          <!-- Light overlay -->
-          <rect x="30" y="25" width="180" height="110" fill="#EAF4EF" opacity="0.4"/>
-          <!-- Border -->
-          <rect x="30" y="25" width="180" height="110" fill="none" stroke="#2D6A4F" stroke-width="2"/>
-          <!-- Center label A -->
-          <text x="120" y="90" text-anchor="middle" dominant-baseline="middle" font-family="'Playfair Display', Georgia, serif" font-size="22" fill="#2D6A4F" font-style="italic">A</text>
+          <!-- Front face hatched -->
+          <polygon points="60,80 60,150 160,150 160,80" fill="url(#hatch-front)" stroke="#2D6A4F" stroke-width="2"/>
+          <polygon points="60,80 60,150 160,150 160,80" fill="#EAF4EF" opacity="0.45" stroke="none"/>
+          <polygon points="60,80 60,150 160,150 160,80" fill="none" stroke="#2D6A4F" stroke-width="2"/>
+          <!-- Top face hatched -->
+          <polygon points="60,80 110,45 210,45 160,80" fill="url(#hatch-top)" stroke="#2D6A4F" stroke-width="2"/>
+          <polygon points="60,80 110,45 210,45 160,80" fill="#EAF4EF" opacity="0.45" stroke="none"/>
+          <polygon points="60,80 110,45 210,45 160,80" fill="none" stroke="#2D6A4F" stroke-width="2"/>
+          <!-- Right face hatched -->
+          <polygon points="160,80 210,45 210,115 160,150" fill="url(#hatch-right)" stroke="#2D6A4F" stroke-width="2"/>
+          <polygon points="160,80 210,45 210,115 160,150" fill="#D4EBE0" opacity="0.5" stroke="none"/>
+          <polygon points="160,80 210,45 210,115 160,150" fill="none" stroke="#2D6A4F" stroke-width="2"/>
+          <!-- Label AT center front -->
+          <text x="110" y="120" text-anchor="middle" dominant-baseline="middle" font-family="'Playfair Display', Georgia, serif" font-size="18" fill="#2D6A4F" font-style="italic">AT</text>
           <!-- Dimension lines -->
-          <line x1="30" y1="158" x2="210" y2="158" stroke="#8A837C" stroke-dasharray="4 3" stroke-width="1"
-                marker-start="url(#arrow-s)" marker-end="url(#arrow-e)"/>
-          <text x="120" y="172" text-anchor="middle" font-family="'DM Mono', monospace" font-size="12" fill="#2D6A4F">b</text>
-          <line x1="228" y1="25" x2="228" y2="135" stroke="#8A837C" stroke-dasharray="4 3" stroke-width="1"
-                marker-start="url(#arrow-s)" marker-end="url(#arrow-e)"/>
-          <text x="244" y="84" text-anchor="start" font-family="'DM Mono', monospace" font-size="12" fill="#2D6A4F" dy="4">h</text>
+          <line x1="60" y1="162" x2="160" y2="162" stroke="#8A837C" stroke-dasharray="4 3" stroke-width="1"/>
+          <text x="110" y="177" text-anchor="middle" font-family="'DM Mono', monospace" font-size="12" fill="#2D6A4F">b</text>
+          <line x1="48" y1="80" x2="48" y2="150" stroke="#8A837C" stroke-dasharray="4 3" stroke-width="1"/>
+          <text x="36" y="118" text-anchor="middle" font-family="'DM Mono', monospace" font-size="12" fill="#2D6A4F" dy="4">h</text>
+          <line x1="160" y1="157" x2="210" y2="122" stroke="#8A837C" stroke-dasharray="4 3" stroke-width="1"/>
+          <text x="195" y="148" text-anchor="middle" font-family="'DM Mono', monospace" font-size="12" fill="#2D6A4F">p</text>
         </svg>
       </div>
 
       <div class="formula-block">
         <div class="formula-label">Fórmula</div>
-        <div class="formula-main">A = b × h</div>
-        <div class="formula-sub" id="area-substitution">A = ? × ?</div>
+        <div class="formula-main">AT = 2(bh + bp + hp)</div>
+        <div class="formula-sub" id="area-substitution">AT = 2(? × ? + ? × ? + ? × ?)</div>
       </div>
 
       <div class="result-box">
         <div class="result-label">Resultado</div>
         <div class="result-value" id="area-result">—</div>
-        <div class="result-sub">de área</div>
+        <div class="result-sub">de área total</div>
       </div>
 
       <div class="insight">
-        💡 A área representa a superfície total — como a quantidade de tinta necessária para cobrir o retângulo.
+        💡 A área total é a soma das 6 faces do paralelepípedo — como a quantidade de papel necessária para embrulhar a caixa por completo.
       </div>
 
       <div class="btn-stack">
@@ -847,7 +853,7 @@
     return s;
   }
 
-  function calcArea(b, h)    { return b * h; }
+  function calcArea(b, h, p) { return 2 * (b*h + b*p + h*p); }
   function calcPerimeter(b, h) { return 2 * (b + h); }
   function calcVolume(b, h, p) { return b * h * p; }
 
@@ -939,13 +945,13 @@
 
   /* ── CALCULATE AREA ── */
   document.getElementById('calc-area-btn').addEventListener('click', () => {
-    const vals = validateFields(false);
+    const vals = validateFields(true);
     if (!vals) return;
     saveInputs();
-    const result = calcArea(vals.b, vals.h);
+    const result = calcArea(vals.b, vals.h, vals.p);
     document.getElementById('area-result').textContent = fmt(result) + ' cm²';
     document.getElementById('area-substitution').textContent =
-      'A = ' + fmt(vals.b) + ' × ' + fmt(vals.h);
+      'AT = 2(' + fmt(vals.b) + '×' + fmt(vals.h) + ' + ' + fmt(vals.b) + '×' + fmt(vals.p) + ' + ' + fmt(vals.h) + '×' + fmt(vals.p) + ')';
     showScreen('screen-area');
   });
 
